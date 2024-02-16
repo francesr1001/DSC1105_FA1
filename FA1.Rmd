@@ -1,0 +1,219 @@
+---
+title: "DSC_1105_FA1"
+author: "Frances Aneth Rosales"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    css: FA1.css
+---
+<style>
+  body {
+    text-align: justify;
+  }
+</style>
+
+
+<br>
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<br><br>
+
+# Read & Show Data
+```{r}
+
+library(readr)
+filepath <- read_csv("cytof_one_experiment.csv")
+filepath
+
+
+head(filepath)
+```
+<br><br><br>
+
+# INTERPRET THE DATA
+
+
+<li> <b> Upon analyzing the plotting, we have found that the mean of the data is indicated by the mean value of 3.457494 for the "GranzymeB" column. The density map indicates a peak in density within this <u> range of values around 4 </u>. The finding derived from the mean calculation is supported by this concentration, which suggests that a sizable fraction of the "GranzymeB" values cluster around the mean. Furthermore, the density plot's variability indicates that there is <u> spread </u> in the data, showing a range of values, even if the central tendency is around 4. All things considered, this interpretation offers a thorough understanding of the "GranzymeB" value distribution, with a noticeable emphasis on the mean. </li> </b>
+
+<br><br>
+```{r mean}
+
+mean(filepath$GranzymeB)
+
+```
+
+<br>
+
+Click to Hide/Show Plots
+
+<button onclick="hideoutput()" style="background: #e8ccd7;"> 
+HIDE/SHOW
+</button>
+<div id="codeinputhere" style="display:block;">
+
+
+# Histogram
+<b> to show the histogram of our desired column "GranzymeB". </b>
+```{r hist}
+
+library(ggplot2)
+
+ggplot(filepath, aes(x = GranzymeB)) +
+  geom_histogram(binwidth = 1, fill = "green", color = "black", alpha = 0.8) +
+  labs(title = "Histogram of GranzymeB",
+       x = "x-GranzymeB",
+       y = "-Frequency") +
+  theme_minimal()
+
+
+
+```
+
+<br><br><br>
+
+# Density Estimates
+
+<b> We can also utilize Density Plotting to analyze the plot of GranzymeB. </b>
+```{r dens}
+
+
+library(ggplot2)
+
+ggplot(filepath, aes(x = GranzymeB)) + geom_density()
+
+
+
+```
+<br><br>
+
+
+<br>
+
+# Quantile Plot of GranzymeB
+
+```{r quant}
+
+library(ggplot2)
+
+ggplot(filepath, aes(sample = GranzymeB)) +
+  stat_qq() +
+  geom_abline(intercept = mean(filepath$GranzymeB), slope = sd(filepath$GranzymeB), color = "blue") +
+  labs(title = "Quantile Plot of GranzymeB",
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles") +
+  theme_minimal()
+
+```
+
+
+</div>
+<script>
+function hideoutput() {
+  var x = document.getElementById("codeinputhere");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+    
+    
+  } else {
+    x.style.display = "block";
+  }
+}
+</script>
+
+
+<br><br>
+
+# Checking other columns to analyze
+
+
+
+```{r coln}
+
+print(colnames(filepath))
+
+
+```
+<br><br><br><br>
+
+# INTERPRET THE DATA
+
+ <b> 
+
+<li>The separate distributions for each variable are clearly visible in the NKp30 and NKp44 histograms, as seen in Figure 1.1. The distribution of NKp44 is dispersed between 0 and 1, but the NKp30 histogram shows a range of values around 4. The overlapping zones do not line nicely when attempting to combine these distributions in the Density Plot at Figure 1.2. The two variables' lack of alignment raises the possibility that they correspond to separate subpopulations or that there are underlying causes influencing each variable's distribution. To comprehend the causes causing the observed discrepancies in the density plots of NKp30 and NKp44, more investigation and analysis could be necessary.</li> </b> 
+
+<br>
+
+Click to Hide/Show Plots
+
+<button onclick="hideoutput()" style="background: #e8ccd7;"> 
+HIDE/SHOW
+</button>
+<div id="codeinputheres" style="display:block;">
+
+
+
+```{r figone}
+
+
+library(ggplot2)
+
+hist_NKp30 <- ggplot(filepath, aes(x = NKp30)) +
+  geom_histogram(binwidth = 0.5, fill = "skyblue", color = "black", alpha = 0.7) +
+  labs(title = "Histogram of NKp30",
+       x = "NKp30",
+       y = "Frequency") +
+  theme_minimal()
+
+hist_NKp44 <- ggplot(filepath, aes(x = NKp44)) +
+  geom_histogram(binwidth = 0.5, fill = "salmon", color = "black", alpha = 0.7) +
+  labs(title = "Histogram of NKp44",
+       x = "NKp44",
+       y = "Frequency", caption = "Figure 1.1") +
+  theme_minimal() +
+  theme(plot.caption = element_text(hjust = .2, size = 12, face = "italic"))
+
+
+combined_plot <- cowplot::plot_grid(hist_NKp30, hist_NKp44, labels = c("A", "B"))
+
+combined_plot
+
+
+```
+
+<br><br><br>
+
+
+```{r figtwo}
+
+
+ggplot(filepath, aes(x = NKp30, fill = "NKp30")) +
+  geom_density(alpha = 0.5) +
+  geom_density(aes(x = NKp44, fill = "NKp44"), alpha = 0.5) +
+  labs(title = "Filled Density Plot of NKp30 and NKp44",
+       x = "Values",
+       y = "Density", caption = "Figure 1.2") +
+  scale_fill_manual(values = c("NKp30" = "blue", "NKp44" = "red")) +
+  theme_minimal()  +
+  theme(plot.caption = element_text(hjust = .2, size = 12, face = "italic"))
+
+
+```
+
+
+
+
+
+</div>
+<script>
+function hideoutput() {
+  var x = document.getElementById("codeinputheres");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+    
+    
+  } else {
+    x.style.display = "block";
+  }
+}
+</script>
